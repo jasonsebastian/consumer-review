@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
@@ -19,7 +20,7 @@ public class Review {
   
   static{
     try {
-      Scanner input = new Scanner(new File("cleanSentiment.csv"));
+      Scanner input = new Scanner(new File("../cleanSentiment.csv"));
       while(input.hasNextLine()){
         String[] temp = input.nextLine().split(",");
         sentiment.put(temp[0],Double.parseDouble(temp[1]));
@@ -37,7 +38,7 @@ public class Review {
       Scanner input = new Scanner(new File("positiveAdjectives.txt"));
       while(input.hasNextLine()){
         String temp = input.nextLine().trim();
-        System.out.println(temp);
+        //System.out.println(temp);
         posAdjectives.add(temp);
       }
       input.close();
@@ -161,5 +162,33 @@ public class Review {
     } else {
       return randomNegativeAdj();
     }
+  }
+  
+  public static void writeToFile(ArrayList<String> adjectives, String fileName)
+  {
+    try {
+      PrintWriter writer = new PrintWriter(new FileWriter(fileName));
+      for (String word : adjectives) {
+        writer.println(word);
+      }
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void main(String[] args)
+  {
+    for (Map.Entry<String, Double> entry : sentiment.entrySet()) {
+      String word = entry.getKey();
+      double rating = entry.getValue();
+      if (rating > 0) {
+        posAdjectives.add(word);
+      } else {
+        negAdjectives.add(word);
+      }
+    }
+    writeToFile(posAdjectives, "positiveAdjectives.txt");
+    writeToFile(negAdjectives, "negativeAdjectives.txt");
   }
 }
