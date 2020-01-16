@@ -163,6 +163,41 @@ public class Review {
       return randomNegativeAdj();
     }
   }
+
+  public static double totalSentiment(String fileName)
+  {
+    String[] words = textToString(fileName).split(" ");
+    double total = 0;
+    for (String word : words) {
+      String cleaned_word = removePunctuation(word);
+      double rating = sentimentVal(cleaned_word);
+      total += rating;
+    }
+    return total;
+  }
+
+  public static int starRating(String fileName)
+  {
+    double totalSentiment = totalSentiment(fileName);
+    if (totalSentiment > 20) {
+      return 5;
+    }
+    else if (totalSentiment > 15) {
+      return 4;
+    }
+    else if (totalSentiment > 10) {
+      return 3;
+    }
+    else if(totalSentiment > 5) {
+      return 2;
+    }
+    else if(totalSentiment > 0) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
   
   public static void writeToFile(ArrayList<String> adjectives, String fileName)
   {
@@ -180,10 +215,15 @@ public class Review {
   public static String fakeReview(String fileName)
   {
     String[] words = textToString(fileName).split(" ");
+    double total = totalSentiment(fileName);
     for (int i = 0; i < words.length; i++) {
       String word = words[i];
       if (word.charAt(0) == '*') {
-        words[i] = randomAdjective() + getPunctuation(word);
+        if (total > 0) {
+          words[i] = randomPositiveAdj() + getPunctuation(word);
+        } else {
+          words[i] = randomNegativeAdj() + getPunctuation(word);
+        }
       }
     }
     return String.join(" ", words);
@@ -191,6 +231,6 @@ public class Review {
 
   public static void main(String[] args)
   {
-    System.out.println(Review.fakeReview("simpleReview.txt"));
+    System.out.println(fakeReview("simpleReview.txt"));
   }
 }
