@@ -177,18 +177,20 @@ public class Review {
     }
   }
 
-  public static void main(String[] args)
+  public static String fakeReview(String fileName)
   {
-    for (Map.Entry<String, Double> entry : sentiment.entrySet()) {
-      String word = entry.getKey();
-      double rating = entry.getValue();
-      if (rating > 0) {
-        posAdjectives.add(word);
-      } else {
-        negAdjectives.add(word);
+    String[] words = textToString(fileName).split(" ");
+    for (int i = 0; i < words.length; i++) {
+      String word = words[i];
+      if (word.charAt(0) == '*') {
+        words[i] = randomAdjective() + getPunctuation(word);
       }
     }
-    writeToFile(posAdjectives, "positiveAdjectives.txt");
-    writeToFile(negAdjectives, "negativeAdjectives.txt");
+    return String.join(" ", words);
+  }
+
+  public static void main(String[] args)
+  {
+    System.out.println(Review.fakeReview("simpleReview.txt"));
   }
 }
